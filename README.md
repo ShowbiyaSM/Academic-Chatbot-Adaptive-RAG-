@@ -110,8 +110,6 @@ academic-chatbot/
 └── README.md # This file
 ```
 
-text
-
 ## 🎯 Key Features
 
 * **Adaptive Retrieval** - Adjusts search based on query type and similarity
