@@ -23,11 +23,10 @@ A smart chatbot that answers questions from uploaded academic PDFs using adaptiv
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/academic-chatbot.git
+git clone https://github.com/ShowbiyaSM/Academic-Chatbot-Adaptive-RAG-.git
 cd academic-chatbot
 ```
 
-text
 
 2. **Install dependencies**
 
@@ -35,7 +34,7 @@ text
 pip install -r requirements.txt
 ```
 
-text
+
 
 3. **Set up OpenAI API key**
 
@@ -51,7 +50,7 @@ Edit .env and add your API key
 OPENAI_API_KEY=your_key_here
 ```
 
-text
+
 
 4. **Run the notebook**
 
@@ -59,7 +58,7 @@ text
 jupyter notebook Academic_Chatbot.ipynb
 ```
 
-text
+
 
 ## 🛠️ How It Works
 
