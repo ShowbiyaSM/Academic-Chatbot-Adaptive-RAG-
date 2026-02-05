@@ -1,20 +1,7 @@
-PDFs
- ↓
-Text Extraction
- ↓
-Chunking
- ↓
-Embeddings (MiniLM)
- ↓
-FAISS Vector Store
- ↓
-Retriever (Top-K)
- ↓
-Prompt + Context
- ↓
-LLM (gpt-4.1-nano)
- ↓
-Answer
+[![Python 3.9+](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://python.org)
+[![OpenAI](https://img.shields.io/badge/OpenAI-GPT-green.svg)](https://openai.com)
+[![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-orange.svg)](https://jupyter.org)
+
 
 ## 🔄 Application Flow
 
