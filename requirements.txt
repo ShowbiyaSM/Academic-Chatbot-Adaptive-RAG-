@@ -1,0 +1,13 @@
+# requirements_minimal.txt
+torch
+transformers==4.36.2
+sentence-transformers==2.2.2
+huggingface_hub==0.20.3
+faiss-cpu
+pdfplumber
+gradio
+openai
+pandas
+numpy
+nltk
+python-dotenv
