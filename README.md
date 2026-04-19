@@ -139,7 +139,7 @@ flowchart TD
     N --> F
     I --> F
 
-## Why Not Just ChatGPT?
+##  Why Not Just ChatGPT? 
 
 ChatGPT can read PDFs, but it works as a black box with no control over retrieval.
 
@@ -149,7 +149,7 @@ This system:
 - Supports caching and validation
 - Restricts answers to relevant topics
 
-##  What Makes It Adaptive?
+##  What Makes It Adaptive? 
 
 - High confidence → answer from documents  
 - Medium → refine & re-search  
@@ -157,3 +157,6 @@ This system:
 - Very low → refuse  
 
 👉 The system dynamically adjusts its response strategy
+
+
+
