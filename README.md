@@ -114,24 +114,27 @@ Click the Gradio link that appears after running the last cell
 ## 🔧 Architecture Flow
 
 ```mermaid
-flowchart LR
+flowchart TD
     A[📄 Upload PDF] --> B[Chunk & Embed]
-    B --> C[FAISS Index]
+    B --> C[(FAISS Index)]
     
-    D[❓ User Query] --> E{⚡ Cache?}
-    E -->|HIT| F[Return Answer]
-    E -->|MISS| G[FAISS Search]
+    D[💬 User Query] --> E{⚡ Cache?}
+    E -->|Hit| F[📤 Return Answer]
+    E -->|Miss| G[🔍 FAISS Search]
     
-    G --> H{Score?}
-    H -->|<0.35| I[❌ Refuse]
+    G --> H{📊 Similarity Score}
+    
+    H -->|< 0.35| I[❌ Polite Refusal]
     H -->|0.35-0.60| J[🌐 Wikipedia/arXiv]
-    H -->|0.60-0.70| K[🔄 Expand Query]
-    H -->|>0.70| L[🤖 GPT]
+    H -->|0.60-0.70| K[🔄 Query Expansion]
+    H -->|> 0.70| L[🤖 GPT Generation]
     
-    J --> L
-    K --> L
-    L --> M[✅ Validate]
-    M -->|Pass| N[💾 Cache]
+    J --> M[✅ Validation]
+    K --> M
+    L --> M
+    
+    M -->|Pass| N[💾 Store in Cache]
     M -->|Fail| K
+    
     N --> F
     I --> F
