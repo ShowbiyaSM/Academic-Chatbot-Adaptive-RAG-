@@ -1,135 +1,167 @@
-# Academic Chatbot
+# 📚 Adaptive RAG System
 
-### Intelligent Q&A System for Academic PDFs
+> **Retrieval-Augmented Generation | Smart Caching | External Fallback | Hallucination Detection**
 
-[![Python 3.9+](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://python.org)
-[![OpenAI](https://img.shields.io/badge/OpenAI-GPT-green.svg)](https://openai.com)
-[![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-orange.svg)](https://jupyter.org)
+![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
+![Colab](https://img.shields.io/badge/Google%20Colab-Ready-orange.svg)
+![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4.1--nano-green.svg)
 
-A smart chatbot that answers questions from uploaded academic PDFs using adaptive retrieval and validation techniques.
+## 🎯 What This System Does
 
----
+| Your Action | System Response |
+|-------------|-----------------|
+| 📄 Upload PDFs | Extracts text, creates chunks, builds FAISS index |
+| ❓ Ask a question | Searches documents + cache + external sources |
+| ⚡ Same question again | Returns instant cached answer |
+| 🌐 Question not in PDF | Fetches from Wikipedia or arXiv |
+| ❌ Unrelated question | Politely refuses to answer |
 
-## ✨ What It Does
+**Bottom line:** Answers from your documents. Fetches from web when needed. Refuses off-topic questions.
 
-* **Upload academic PDFs** - research papers, textbooks, articles
-* **Ask natural language questions** - get accurate answers with source validation
-* **Handles vague queries** - expands questions using document context
-* **Prevents wrong answers** - checks for hallucinations and correctness
-* **Fast responses** - remembers similar questions using semantic caching
+## Features
 
-## 🚀 Quick Start
+### Document Processing
+- 📄 Multi-PDF upload with parent-child chunking (250/1500 chars)
+- 🔄 File & chunk deduplication
+- 🗂️ FAISS vector database (IndexFlatIP)
 
-1. **Clone the repository**
+### Query Processing
+- ✏️ Query rewriter (typos, contractions, normalization)
+- ⚡ Three-layer cache: Exact match + Type-aware + Semantic (FAISS)
+- 🔀 Parallel processing (embedding + FAISS + keyword search)
 
-```bash
-git clone https://github.com/ShowbiyaSM/Academic-Chatbot-Adaptive-RAG-.git
-cd academic-chatbot
-```
+### Smart Routing
+- 🧭 3-tier confidence-based routing (<0.35 refuse, 0.35-0.60 external, 0.60-0.70 adaptive, >0.70 direct)
+- 🌐 External fallback to Wikipedia + arXiv with cross-encoder relevance check
 
+### Retrieval & Generation
+- 🔍 Hybrid search (FAISS semantic + keyword BM25)
+- 📊 MMR (Maximum Marginal Relevance) for diverse chunks (λ=0.7)
+- 🎯 Query type detection (definition, explain, compare, list, general)
+- 📏 Dynamic context size based on query type
+- 🤖 GPT-4.1-nano answer generation (temperature=0 for deterministic)
 
-2. **Install dependencies**
+### Validation & Learning
+- ✅ NLI hallucination detection (BART-MNLI)
+- 📝 Heuristic correctness check
+- 🔄 Regeneration on validation failure (max 2 attempts)
+- 📚 Learning loop with JSONL logging
 
-```bash
-pip install -r requirements.txt
-```
+### User Interface
+- 💬 Gradio chat interface with conversation history
+- 📊 Confidence score display
+- ⚡ Cache hit indicator
+- 🌐 External source indicator
+- 📄 Sections used display
 
+## 🛠️ Tech Stack
 
+| Component | Tool/Model |
+|-----------|------------|
+| PDF Processing | `pdfplumber`, `langchain-text-splitters` |
+| Embeddings | `all-MiniLM-L6-v2` |
+| Vector DB | FAISS |
+| LLM | GPT-4.1-nano (OpenAI API) |
+| External Search | Wikipedia API, arXiv API |
+| Relevance | Cross-encoder `ms-marco-MiniLM-L-6-v2` |
+| Hallucination | `bart-large-mnli` |
+| UI | Gradio |
 
-3. **Set up OpenAI API key**
+## 🚀 How to Run in Colab
 
-Copy the template
+### Step 1: Open Google Colab
 
-```bash
-cp .env.example .env
-```
+Go to [colab.research.google.com](https://colab.research.google.com)
 
-Edit .env and add your API key
+### Step 2: Add OpenAI API key to Secrets
 
-```env
-OPENAI_API_KEY=your_key_here
-```
+Click 🔑 Secrets (left sidebar) and add:
 
+| Secret Name | Value |
+|-------------|-------|
+| `OPENAI_API_KEY` | Your OpenAI API key |
+| `OPENAI_BASE_URL` | `https://api.openai.com/v1` |
+| `OPENAI_MODEL` | `gpt-4.1-nano` |
 
+### Step 3: Copy all code cells in order
 
-4. **Run the notebook**
+- Phase 0: PDF Processing
+- Phase 1: Query Processing
+- Phase 2: Smart Routing
+- Phase 3: Adaptive Processing
+- Phase 3.5: External Retriever
+- Phase 4: Answer Generation
+- Phase 5: Answer Validation
+- Phase 6: RAG Orchestrator + Gradio UI
 
-```bash
-jupyter notebook Academic_Chatbot.ipynb
-```
+### Step 4: Run all cells
 
+Click `Runtime → Run all`
 
+### Step 5: Use the Gradio interface
 
-## 🛠️ How It Works
+Click the Gradio link that appears after running the last cell
 
+## 📊 Output Indicators
 
-### Step-by-Step Process
+| Symbol | Meaning |
+|--------|---------|
+| ⚡ | Answer from cache (instant) |
+| 🌐 | Includes external sources (Wikipedia/arXiv) |
+| 📊 | Confidence score (0-1 scale) |
+| 📄 | Number of document sections used |
 
-1. **PDF Upload & Processing**
-   - Upload academic PDFs through the interface
-   - Extract text using `pdfplumber`
-   - Split into semantic chunks with `langchain-text-splitters`
+## 🔧 Architecture Flow
+## 🔧 Architecture Flow
 
-2. **Vector Storage**
-   - Convert chunks to embeddings using `sentence-transformers/all-MiniLM-L6-v2`
-   - Store embeddings in FAISS vector database for fast retrieval
+```mermaid
+flowchart TD
+    subgraph INPUT["📥 INPUT"]
+        A[User Uploads PDF] --> B[Extract Text & Chunk]
+        B --> C[Generate Embeddings]
+        C --> D[Store in FAISS Index]
+    end
 
-3. **Query Processing**
-   - User asks a natural language question
-   - Convert query to embedding
-   - Check semantic cache for similar previous queries
+    subgraph QUERY["❓ QUERY PROCESSING"]
+        E[User Asks Question] --> F[Query Rewriter]
+        F --> G{Check Cache?}
+        G -->|HIT| H[Return Cached Answer ⚡]
+        G -->|MISS| I[FAISS + Keyword Search]
+    end
 
-4. **Adaptive Retrieval**
-   - FAISS similarity search finds relevant chunks
-   - **Adaptive Step**: Check if query is related to PDF content
-   - **Adaptive Step**: Expand vague queries using chunk keywords
-   - **Adaptive Step**: Validate if chunks are sufficient to answer
+    subgraph ROUTER["🧭 SMART ROUTER"]
+        I --> J{Similarity Score}
+        J -->|< 0.35| K[Polite Refusal]
+        J -->|0.35 - 0.60| L[External Fallback]
+        J -->|0.60 - 0.70| M[Adaptive Processing]
+        J -->|> 0.70| N[High Confidence]
+    end
 
-5. **Answer Generation**
-   - Send query + top chunks to OpenAI GPT
-   - Generate answer strictly based on provided context
-   - **Key**: GPT used only here (cost optimization)
+    subgraph EXTERNAL["🌐 EXTERNAL SEARCH"]
+        L --> O[Wikipedia API]
+        L --> P[arXiv API]
+        O --> Q[Merge Results]
+        P --> Q
+    end
 
-6. **Answer Validation**
-   - Check for hallucinations using NLI model (`facebook/bart-large-mnli`)
-   - Validate correctness with heuristic checks
-   - **Adaptive Step**: Regenerate if validation fails
+    subgraph GENERATE["🤖 ANSWER GENERATION"]
+        M --> R[Query Expansion]
+        R --> S[Cross-Encoder Check]
+        N --> T[Build Context]
+        Q --> T
+        S --> T
+        T --> U[GPT Generation]
+    end
 
-7. **Response & Learning**
-   - Display final answer to user
-   - Store in semantic cache for future similar queries
-   - Log interactions for continuous improvement
+    subgraph VALIDATE["✅ VALIDATION"]
+        U --> V{Validation Pass?}
+        V -->|YES| W[Cache Answer]
+        V -->|NO| X[Regenerate]
+        X --> U
+    end
 
-## 📁 Project Structure
-
-```
-academic-chatbot/
-├── Academic_Chatbot.ipynb # Complete implementation
-├── requirements.txt # Python dependencies
-├── .env.example # API key setup template
-└── README.md # This file
-```
-
-## 🎯 Key Features
-
-* **Adaptive Retrieval** - Adjusts search based on query type and similarity
-* **Query Expansion** - Improves vague questions using document keywords
-* **Answer Validation** - NLI model checks hallucination + correctness
-* **Semantic Caching** - FAISS-based cache for similar questions
-* **Cost Optimized** - Open-source models for validation, GPT only for answers
-
-## 💡 Learning Project
-
-This project implements:
-
-* **RAG (Retrieval-Augmented Generation)** pipeline
-* **Semantic search** with FAISS and Sentence Transformers
-* **Adaptive routing** based on query-document similarity
-* **Answer validation** using NLI models
-* **Production optimizations** like caching and early exits
-
-Built while learning about NLP systems and RAG architectures.
-
----
-
-*Perfect for students, researchers, and anyone working with academic documents.*
+    subgraph OUTPUT["📤 OUTPUT"]
+        W --> Y[Return Answer]
+        K --> Y
+        H --> Y
+    end
