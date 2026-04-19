@@ -138,3 +138,22 @@ flowchart TD
     
     N --> F
     I --> F
+
+## Why Not Just ChatGPT?
+
+ChatGPT can read PDFs, but it works as a black box with no control over retrieval.
+
+This system:
+- Uses document-based retrieval (FAISS)
+- Applies confidence-based routing
+- Supports caching and validation
+- Restricts answers to relevant topics
+
+##  What Makes It Adaptive?
+
+- High confidence → answer from documents  
+- Medium → refine & re-search  
+- Low → external sources (Wikipedia/arXiv)  
+- Very low → refuse  
+
+👉 The system dynamically adjusts its response strategy
