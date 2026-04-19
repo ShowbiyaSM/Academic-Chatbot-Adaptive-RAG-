@@ -21,38 +21,38 @@
 ## Features
 
 ### Document Processing
-- 📄 Multi-PDF upload with parent-child chunking (250/1500 chars)
-- 🔄 File & chunk deduplication
-- 🗂️ FAISS vector database (IndexFlatIP)
+-  Multi-PDF upload with parent-child chunking (250/1500 chars)
+-  File & chunk deduplication
+-  FAISS vector database (IndexFlatIP)
 
 ### Query Processing
-- ✏️ Query rewriter (typos, contractions, normalization)
-- ⚡ Three-layer cache: Exact match + Type-aware + Semantic (FAISS)
-- 🔀 Parallel processing (embedding + FAISS + keyword search)
+-  Query rewriter (typos, contractions, normalization)
+-  Three-layer cache: Exact match + Type-aware + Semantic (FAISS)
+-  Parallel processing (embedding + FAISS + keyword search)
 
 ### Smart Routing
-- 🧭 3-tier confidence-based routing (<0.35 refuse, 0.35-0.60 external, 0.60-0.70 adaptive, >0.70 direct)
-- 🌐 External fallback to Wikipedia + arXiv with cross-encoder relevance check
+-  3-tier confidence-based routing (<0.35 refuse, 0.35-0.60 external, 0.60-0.70 adaptive, >0.70 direct)
+-  External fallback to Wikipedia + arXiv with cross-encoder relevance check
 
 ### Retrieval & Generation
-- 🔍 Hybrid search (FAISS semantic + keyword BM25)
-- 📊 MMR (Maximum Marginal Relevance) for diverse chunks (λ=0.7)
-- 🎯 Query type detection (definition, explain, compare, list, general)
-- 📏 Dynamic context size based on query type
-- 🤖 GPT-4.1-nano answer generation (temperature=0 for deterministic)
+-  Hybrid search (FAISS semantic + keyword BM25)
+-  MMR (Maximum Marginal Relevance) for diverse chunks (λ=0.7)
+-  Query type detection (definition, explain, compare, list, general)
+-  Dynamic context size based on query type
+-  GPT-4.1-nano answer generation (temperature=0 for deterministic)
 
 ### Validation & Learning
-- ✅ NLI hallucination detection (BART-MNLI)
-- 📝 Heuristic correctness check
-- 🔄 Regeneration on validation failure (max 2 attempts)
-- 📚 Learning loop with JSONL logging
+-  NLI hallucination detection (BART-MNLI)
+-  Heuristic correctness check
+-  Regeneration on validation failure (max 2 attempts)
+-  Learning loop with JSONL logging
 
 ### User Interface
-- 💬 Gradio chat interface with conversation history
-- 📊 Confidence score display
-- ⚡ Cache hit indicator
-- 🌐 External source indicator
-- 📄 Sections used display
+-  Gradio chat interface with conversation history
+-  Confidence score display
+-  Cache hit indicator
+-  External source indicator
+-  Sections used display
 
 ## 🛠️ Tech Stack
 
@@ -112,56 +112,27 @@ Click the Gradio link that appears after running the last cell
 | 📄 | Number of document sections used |
 
 ## 🔧 Architecture Flow
-## 🔧 Architecture Flow
 
 ```mermaid
-flowchart TD
-    subgraph INPUT["📥 INPUT"]
-        A[User Uploads PDF] --> B[Extract Text & Chunk]
-        B --> C[Generate Embeddings]
-        C --> D[Store in FAISS Index]
-    end
-
-    subgraph QUERY["❓ QUERY PROCESSING"]
-        E[User Asks Question] --> F[Query Rewriter]
-        F --> G{Check Cache?}
-        G -->|HIT| H[Return Cached Answer ⚡]
-        G -->|MISS| I[FAISS + Keyword Search]
-    end
-
-    subgraph ROUTER["🧭 SMART ROUTER"]
-        I --> J{Similarity Score}
-        J -->|< 0.35| K[Polite Refusal]
-        J -->|0.35 - 0.60| L[External Fallback]
-        J -->|0.60 - 0.70| M[Adaptive Processing]
-        J -->|> 0.70| N[High Confidence]
-    end
-
-    subgraph EXTERNAL["🌐 EXTERNAL SEARCH"]
-        L --> O[Wikipedia API]
-        L --> P[arXiv API]
-        O --> Q[Merge Results]
-        P --> Q
-    end
-
-    subgraph GENERATE["🤖 ANSWER GENERATION"]
-        M --> R[Query Expansion]
-        R --> S[Cross-Encoder Check]
-        N --> T[Build Context]
-        Q --> T
-        S --> T
-        T --> U[GPT Generation]
-    end
-
-    subgraph VALIDATE["✅ VALIDATION"]
-        U --> V{Validation Pass?}
-        V -->|YES| W[Cache Answer]
-        V -->|NO| X[Regenerate]
-        X --> U
-    end
-
-    subgraph OUTPUT["📤 OUTPUT"]
-        W --> Y[Return Answer]
-        K --> Y
-        H --> Y
-    end
+flowchart LR
+    A[📄 Upload PDF] --> B[Chunk & Embed]
+    B --> C[FAISS Index]
+    
+    D[❓ User Query] --> E{⚡ Cache?}
+    E -->|HIT| F[Return Answer]
+    E -->|MISS| G[FAISS Search]
+    
+    G --> H{Score?}
+    H -->|<0.35| I[❌ Refuse]
+    H -->|0.35-0.60| J[🌐 Wikipedia/arXiv]
+    H -->|0.60-0.70| K[🔄 Expand Query]
+    H -->|>0.70| L[🤖 GPT]
+    
+    J --> L
+    K --> L
+    L --> M[✅ Validate]
+    M -->|Pass| N[💾 Cache]
+    M -->|Fail| K
+    N --> F
+    I --> F
+end
